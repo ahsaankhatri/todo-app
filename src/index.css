@@ -35,9 +35,6 @@ code {
   margin-left: 10px;
 }
 
-.para {
-  margin-left: 380px;
-}
 .check {
   margin-left: 355px;
 }
@@ -53,20 +50,25 @@ code {
 label:hover {
   color: #737373;
 }
-.all {
-  width: 3%;
-  margin-left: 43%;
-}
-.act {
-  width: 4%;
-}
-.comp {
-  width: 6%;
-}
-.clr {
-  width: 9%;
-  margin-left: 66%;
-}
 ::placeholder {
   font-style: italic;
+}
+.div-list {
+  display: flex;
+  flex-direction: row;
+  margin-bottom: 10px;
+}
+.bottom {
+  display: flex;
+  flex-direction: row;
+  margin-top: 20px;
+}
+.para {
+  margin-left: 380px;
+}
+.all {
+  margin-left: 170px;
+}
+.clr {
+  margin-left: 160px;
 }

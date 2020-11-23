@@ -1,57 +1,57 @@
 import React, { Component, Fragment } from "react";
-import UniqueId from "react-html-id";
-import Clear from "./clear";
+import ListGroup from "./listGroup";
+import NoOfItems from "./noOfItems";
 import Display from "./display";
+import Clear from "./clear";
 
 class MainPage extends Component {
   constructor() {
     super();
-    UniqueId.enableUniqueIds(this);
     this.state = {
+      data: [
+        {
+          name: "",
+          completed: false,
+        },
+      ],
       data: [],
-      id: this.nextUniqueId(),
-      finalData: "",
-      checkValue: false,
-      show: false,
     };
-
-    console.log(this.state);
   }
 
   handleChange = (e) => {
     e.preventDefault();
-    this.setState({ finalData: e.target.value });
+
+    this.setState({ name: e.target.value });
   };
 
   handleSubmit = (e) => {
     e.preventDefault();
 
-    const { show } = this.state;
-
     this.setState({
-      data: [...this.state.data, this.state.finalData],
-      finalData: "",
+      data: [...this.state.data, { name: this.state.name, completed: false }],
     });
     e.target.reset();
-    if (this.state.data.length >= 0) this.setState({ show: !show });
   };
 
-  handleDelete = (index, e) => {
-    e.preventDefault();
+  handleDelete = (index) => {
     const newList = [...this.state.data];
     newList.splice(index, 1);
 
-    this.setState({ newList: newList });
+    this.setState({ data: newList });
   };
 
-  handleCheck = (e) => {
+  handleAllCheck = (e) => {
     e.preventDefault();
+
+    let { completed } = this.state.data;
+
+    this.setState({ completed: !completed });
   };
 
-  handleCheckChange = () => {
-    const { checkValue } = this.state;
-
-    this.setState({ checkValue: !checkValue });
+  handleCheckChange = (index) => {
+    let newData = [...this.state.data];
+    newData[index].completed = !newData[index].completed;
+    this.setState({ data: newData });
   };
 
   render() {
@@ -60,54 +60,25 @@ class MainPage extends Component {
         <h1 className="display-1 text-center" style={{ color: "#f7c6c6" }}>
           todos
         </h1>
-        <form className="todo-form" onSubmit={this.handleSubmit}>
-          <label className="label" onClick={this.handleCheck}>
-            ^
-          </label>
-          <input
-            autoFocus
-            type="text"
-            onChange={this.handleChange}
-            className="new-todo shadow-lg p-3 mb-5 bg-white"
-            placeholder="What needs to be done?"
-          />
-          <ul className="list-group">
-            {this.state.data.map((data, index) => {
-              return (
-                <div>
-                  <input
-                    className="check"
-                    onChange={this.handleCheckChange}
-                    type="checkbox"
-                    style={{
-                      cursor: "pointer",
-                    }}
-                    defaultChecked={this.state.checkValue}
-                  />
-                  <li
-                    className="list-group-item disabled w-50 p-3 mx-auto"
-                    style={{
-                      textDecoration: this.state.checkValue && "line-through",
-                    }}
-                    key={"todo-" + index}
-                  >
-                    {data}
-                  </li>
-                  <button
-                    onClick={this.handleDelete.bind(this, index)}
-                    type="button"
-                    className="close"
-                    aria-label="Close"
-                  >
-                    <span aria-hidden="true">&times;</span>
-                  </button>
-                </div>
-              );
-            })}
-          </ul>
-          {this.state.show && <Display noOfTodos={this.state.data.length} />}
-          {this.state.checkValue && <Clear />}
-        </form>
+        <ListGroup
+          data={this.state.data}
+          onSubmitted={this.handleSubmit}
+          onClicked={this.handleAllCheck}
+          onChanged={this.handleChange}
+          onCheckChange={this.handleCheckChange}
+          onDeletion={this.handleDelete}
+        />
+        <div className="bottom">
+          {this.state.data.length > 0 && (
+            <NoOfItems noOfTodos={this.state.data.length} />
+          )}
+          {this.state.data.length > 0 && (
+            <Display completedItem={this.state.data.completed} />
+          )}
+          {this.state.data.some(({ completed }) => completed) && (
+            <Clear onCliked={() => this.handleDelete(this.props.index)} />
+          )}
+        </div>
       </Fragment>
     );
   }
